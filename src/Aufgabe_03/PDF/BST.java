@@ -235,6 +235,79 @@ public class BST<T extends Comparable<T>> {
         return max.data;
     }
 
+    // Successor eines gegebenen Knotens
+    public T successor(T elem) {
+        Node node = findNode(root, elem);
+        if (node == null) return null;  // Element nicht gefunden
+
+        // Wenn der Knoten einen rechten Unterbaum hat
+        if (node.right != null) {
+            return findMin(node.right).data;
+        }
+
+        // Ansonsten gehe nach oben zum Vorfahren
+        Node parent = findParent(root, node);
+        while (parent != null && node == parent.right) {
+            node = parent;
+            parent = findParent(root, node);
+        }
+        return parent != null ? parent.data : null;
+    }
+
+    // Predecessor eines gegebenen Knotens
+    public T predecessor(T elem) {
+        Node node = findNode(root, elem);
+        if (node == null) return null;  // Element nicht gefunden
+
+        // Wenn der Knoten einen linken Unterbaum hat
+        if (node.left != null) {
+            return findMax(node.left).data;
+        }
+
+        // Ansonsten gehe nach oben zum Vorfahren
+        Node parent = findParent(root, node);
+        while (parent != null && node == parent.left) {
+            node = parent;
+            parent = findParent(root, node);
+        }
+        return parent != null ? parent.data : null;
+    }
+
+    // Hilfsmethode zum Finden des Knotens mit einem bestimmten Wert
+    private Node findNode(Node node, T elem) {
+        while (node != null) {
+            int cmp = elem.compareTo(node.data);
+            if (cmp < 0) {
+                node = node.left;
+            } else if (cmp > 0) {
+                node = node.right;
+            } else {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    // Hilfsmethode zum Finden des Elternknotens eines gegebenen Knotens
+    private Node findParent(Node root, Node child) {
+        Node parent = null;
+        Node current = root;
+        while (current != null) {
+            int cmp = child.data.compareTo(current.data);
+            if (cmp < 0) {
+                parent = current;
+                current = current.left;
+            } else if (cmp > 0) {
+                parent = current;
+                current = current.right;
+            } else {
+                return parent;
+            }
+        }
+        return null;
+    }
+
+
     // This method returns an iterator for a given TreeTraversalOrder.
     // The ways in which you can traverse the tree are in four different ways:
     // preorder, inorder, postorder and levelorder.
@@ -408,7 +481,7 @@ public class BST<T extends Comparable<T>> {
 
     public static void main(String[] args) {
         BST<Integer> bst = new BST<>();
-        int[] values = {50, 30, 70, 20, 40, 60, 80};
+        int[] values = {50, 30, 70, 20, 40, 60, 80, 30, 30, 20, 70};
 
         for (int val : values) bst.add(val);
 
@@ -429,16 +502,20 @@ public class BST<T extends Comparable<T>> {
 //        else System.out.println("Update ungültig.");
 //        bst.printTree();
 
-        System.out.println("\nEntferne 70:");
-        bst.remove(50);
-        bst.printTree();
-
+//        System.out.println("\nEntferne 70:");
+//        bst.remove(50);
+//        bst.printTree();
 
         System.out.println("Suche nach 20: ");
         System.out.println(bst.search(70));
 
         System.out.println(bst.minimum());
         System.out.println(bst.maximum());
+
+        System.out.println(bst.successor(20));
+        System.out.println(bst.predecessor(20));
+
+
     }
 
 
