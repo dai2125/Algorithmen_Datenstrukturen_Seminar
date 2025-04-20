@@ -2,9 +2,6 @@ package Seminar_01_Komplexitätsanalyse;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Path2D;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MatrixAddition extends JPanel {
 
@@ -171,7 +168,7 @@ public class MatrixAddition extends JPanel {
 
     public static void main(String[] args) throws InterruptedException {
 
-        int[] sizes = {250, 500, 1000};
+        int[] sizes = {1250, 2500, 5000};
         long[][] addTimes = new long[sizes.length][sizes.length];
         long[][] mulTimes = new long[sizes.length][sizes.length];
 
