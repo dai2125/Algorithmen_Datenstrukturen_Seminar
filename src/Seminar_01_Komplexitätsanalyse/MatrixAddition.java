@@ -2,6 +2,9 @@ package Seminar_01_Komplexitätsanalyse;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Path2D;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MatrixAddition extends JPanel {
 
@@ -17,7 +20,7 @@ public class MatrixAddition extends JPanel {
         minSize = sizes[0];
     }
 
-    public static int[][] addMatricesThreadSupport(int[][] A, int[][] B) throws InterruptedException {
+    static int[][] addMatricesThreadSupport(int[][] A, int[][] B) throws InterruptedException {
         int n = A.length;
         int[][] result = new int[n][n];
 
@@ -46,7 +49,7 @@ public class MatrixAddition extends JPanel {
         return result;
     }
 
-    public static int[][] mulMatricesThreadSupport(int[][] A, int[][] B) throws InterruptedException {
+    static int[][] mulMatricesThreadSupport(int[][] A, int[][] B) throws InterruptedException {
         int n = A.length;
         int[][] result = new int[n][n];
 
@@ -75,7 +78,7 @@ public class MatrixAddition extends JPanel {
         return result;
     }
 
-    public static int[][] generateRandomMatrix(int n) {
+    static int[][] generateRandomMatrix(int n) {
         int[][] matrix = new int[n][n];
         java.util.Random rand = new java.util.Random();
         for (int i = 0; i < n; i++)
@@ -109,7 +112,7 @@ public class MatrixAddition extends JPanel {
         int height = getHeight();
 
         int maxSize = sizes[sizes.length - 1];
-        int maxTime = (int) addTimes[addTimes.length - 1][addTimes.length - 1];
+        int maxTime = (int) mulTimes[mulTimes.length - 1][mulTimes.length - 1];
 
         g2.drawLine(50, height - 50, width - 50, height - 50);
         g2.drawLine(50, height - 50, 50, 50);
@@ -132,7 +135,10 @@ public class MatrixAddition extends JPanel {
         Color[] colors = {Color.GREEN, Color.BLUE, Color.MAGENTA, Color.RED, Color.YELLOW, Color.ORANGE};
 
         int y = 50;
+        int a = 0;
+        int b = 3;
         Label label;
+
         for (int i = 0; i < sizes.length; i++) {
             g2.setColor(colors[i]);
             g2.drawLine(startX, startY, startX + sizes[i] * (width - 100) / maxSize, startY - (int) (addTimes[i][i] * (height - 100) / maxTime));
@@ -165,7 +171,7 @@ public class MatrixAddition extends JPanel {
 
     public static void main(String[] args) throws InterruptedException {
 
-        int[] sizes = {1000, 1500, 2000};
+        int[] sizes = {250, 500, 1000};
         long[][] addTimes = new long[sizes.length][sizes.length];
         long[][] mulTimes = new long[sizes.length][sizes.length];
 
