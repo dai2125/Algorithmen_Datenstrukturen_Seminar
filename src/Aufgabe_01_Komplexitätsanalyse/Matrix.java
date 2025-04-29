@@ -452,8 +452,6 @@ public class Matrix<T extends Number> extends JPanel {
         Color[] colors = {Color.GREEN, Color.BLUE, Color.MAGENTA, Color.RED, Color.YELLOW, Color.ORANGE};
 
         int y = 50;
-        int a = 0;
-        int b = 3;
         Label label;
 
         for (int i = 0; i < sizes.length; i++) {

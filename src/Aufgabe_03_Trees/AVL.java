@@ -2,12 +2,47 @@ package Aufgabe_03_Trees;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class AVL<T extends Comparable<T>> {
 
     int nodeCount = 0;
 
     Node root = null;
+
+    final static String OPTIONS = "ENTER: " +
+            "\n\t{ -successor -value } [PRINTS SUCCESSOR]" +
+            "\t{ -predecessor -value } [PRINTS PREDECESSOR]" +
+            "\t{ -add -value } [ADDS VALUE]" +
+            "\n\t{ -print } [PRINTS AVL]" +
+            "\t\t\t\t\t\t{ -remove -value } [REMOVES VALUE]" +
+            "\t\t\t\t{ -update -old value -new value } [UPDATES VALUE] " +
+            "\n\t{ -exit } [SHUTS DOWN PROGRAM]"
+            ;
+
+    final static String WRONGINPUT = "Invalid input";
+    final static String ENTERTWONUMBERS = "Enter two numbers";
+    final static String REMOVESUCCESSFULL = "Remove successful";
+    final static String UPDATESUCCESSFULL = "Update successful";
+    final static String REMOVEFAILED = "Remove failed";
+    final static String UPDATEFAILED = "Update failed";
+    final static String NODENOTFOUND = "Node not found";
+    final static String SUCCESSOR = "The successor value of ";
+    final static String PREDECESSOR = "The predecessor value of ";
+    final static String IS = " is ";
+    final static String ADDSUCCESSFULL = "Added successful";
+    final static String ADDFAILED = "Add failed";
+    final static String PRINT = "print";
+    final static String REMOVE = "remove";
+    final static String UPDATE = "update";
+    final static String EXIT = "exit";
+    final static String LEVEL = "level";
+    final static String PREDECESSORS = "predecessor";
+    final static String SUCCESSORS = "successor";
+    final static String PREORDER = "preorder";
+    final static String POSTORDER = "postorder";
+    final static String INORDER = "inorder";
+    final static String ADD = "add";
 
     private class Node {
         T data;
@@ -33,11 +68,13 @@ public class AVL<T extends Comparable<T>> {
     boolean add(T elem) {
 
         if (contains(elem)) {
+            printAddFailed();
             return false;
         } else {
             root = add(root, elem);
             nodeCount++;
             balanceTree(root);
+            printAddSuccessfull();
             return true;
         }
     }
@@ -62,8 +99,10 @@ public class AVL<T extends Comparable<T>> {
             nodeCount--;
 
             balanceTree(root);
+            printRemoveSuccessFull();
             return true;
         }
+        printRemoveFailed();
         return false;
     }
 
@@ -246,7 +285,7 @@ public class AVL<T extends Comparable<T>> {
     void updateNode(T elem, T newValue) {
         Node node = findNode(root, elem);
         if (node == null) {
-            System.out.println("node not found");
+            printNodeNotFound();
             return;
         }
 
@@ -265,12 +304,11 @@ public class AVL<T extends Comparable<T>> {
 
             smaller = newValue.compareTo(pre.data);
             greater = newValue.compareTo(suc.data);
-            System.out.println("smaller: " + smaller + " greater: " + greater);
             if (greater < 0 && smaller > 0) {
                 node.data = newValue;
-                System.out.println("smaller < 0 && greater > 0: node.data: " + node.data + ", pre.data: " + pre.data + ", suc.data: " + suc.data);
+                printUpdateSuccessFull();
             } else {
-                System.out.println("smaller < 0 && greater > 0: couldnt update value: elem: " + elem + ", newValue: " + newValue);
+                printUpdateFailed();
             }
         }
     }
@@ -554,40 +592,119 @@ public class AVL<T extends Comparable<T>> {
         return root;
     }
 
+    static void printOptions() {
+        System.out.println(OPTIONS);
+    }
+
+    static void printWrongInput() {
+        System.out.println(WRONGINPUT);
+    }
+
+    static void printUpdate() {
+        System.out.println(ENTERTWONUMBERS);
+    }
+
+    static boolean isNumeric(String str) {
+        if(str.matches("[0-9]{1,3}")) {
+            return true;
+        }
+        return false;
+    }
+
+    static boolean isNotNumeric(String str) {
+        return !isNumeric(str);
+    }
+
+    static void printRemoveSuccessFull() {
+        System.out.println(REMOVESUCCESSFULL);
+    }
+
+    static void printRemoveFailed() {
+        System.out.println(REMOVEFAILED);
+    }
+
+    static void printUpdateSuccessFull() {
+        System.out.println(UPDATESUCCESSFULL);
+    }
+
+    static void printUpdateFailed() {
+        System.out.println(UPDATEFAILED);
+    }
+
+    static void printNodeNotFound() {
+        System.out.println(NODENOTFOUND);
+    }
+
+    static void printSuccessor() {
+        System.out.print(SUCCESSOR);
+    }
+
+    static void printPredecessor() {
+        System.out.print(PREDECESSOR);
+    }
+
+    static void printIs() {
+        System.out.print(IS);
+    }
+
+    static void printValue(String text) {
+        System.out.print(text);
+    }
+
+    static void printAddFailed() {
+        System.out.println(ADDFAILED);
+    }
+
+    static void printAddSuccessfull() {
+        System.out.println(ADDSUCCESSFULL);
+    }
+
     public static void main(String[] args) {
         AVL<Integer> avl = new AVL<>();
         //int[] values = {50, 30, 70, 20, 40, 60, 80, 30, 30, 20, 70};
         //int[] values = {55, 40, 28, 10, 30, 60, 95, 88, 68, 90, 63, 84, 99, 98};
         int[] values = { 10, 20, 30, 40, 50, 25 , 100, 70, 80, 60, 90, 26, 27, 28, 29, 30};
 
-
         for (int val : values) avl.add(val);
 
-        System.out.println("Baumstruktur:");
-        avl.printTree();
+        Scanner scanner = new Scanner(System.in);
+        String[] input = new String[3];
 
-        System.out.println("Update Node");
-       // avl.updateNode(90, 81);
-        //System.out.println(updateNode3(28, 11));
+        while(true) {
+            printOptions();
+            input = scanner.nextLine().split("\\s+");
 
-//        avl.add(71);
-//        avl.add(72);
-//        avl.add(81);
-//        avl.add(82);
-//        avl.add(83);
-//        avl.add(84);
-//        avl.add(85);
-//        avl.add(86);
-//        avl.add(87);
-//        avl.add(41);
-//        avl.add(42);
-//        avl.add(43);
-//        avl.add(44);
-
-        avl.remove(90);
-        avl.remove(100);
-        //avl.remove(80);
-        avl.printTree();
-
+            if (input[0].equalsIgnoreCase(EXIT)) {
+                break;
+            } else if (input[0].equalsIgnoreCase(PRINT)) {
+                avl.printTree();
+            } else if (input.length == 2) {
+                if (input[0].equalsIgnoreCase(ADD) && !input[1].equals("") && isNumeric(input[1])) {
+                    avl.add(Integer.parseInt(input[1]));
+                } else if (input[0].equalsIgnoreCase(REMOVE) && !input[1].equals("") && isNumeric(input[1])) {
+                    avl.remove(Integer.parseInt(input[1]));
+                } else if (input[0].equalsIgnoreCase(SUCCESSORS) && !input[1].equals("") && isNumeric(input[1])) {
+                    printSuccessor();
+                    printValue(input[1]);
+                    printIs();
+                    System.out.println(avl.successor(Integer.parseInt(input[1])));
+                } else if (input[0].equalsIgnoreCase(PREDECESSORS) && !input[1].equals("") && isNumeric(input[1])) {
+                    printPredecessor();
+                    printValue(input[1]);
+                    printIs();
+                    System.out.println(avl.predecessor(Integer.parseInt(input[1])));
+                } else {
+                    printWrongInput();
+                }
+            } else if (input.length == 3) {
+                if (input[0].equalsIgnoreCase(UPDATE) && !input[1].equals("") && !input[2].equals("") && isNumeric(input[1]) && isNumeric(input[2])) {
+                    avl.updateNode(Integer.parseInt(input[1]), Integer.parseInt(input[2]));
+                } else {
+                    printWrongInput();
+                }
+            } else {
+                printWrongInput();
+            }
+        }
     }
 }

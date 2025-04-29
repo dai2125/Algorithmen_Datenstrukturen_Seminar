@@ -134,7 +134,6 @@ public class MatrixStrassenOptimized {
     private static int[][] strassenMultiplyRecursive(int[][] a, int[][] b) {
         int n = a.length;
 
-        // Base case: standard multiplication for small matrices
         if (n <= MINIMUM_STRASSEN_THRESHOLD) {
             return standardMultiply(a, b);
         }

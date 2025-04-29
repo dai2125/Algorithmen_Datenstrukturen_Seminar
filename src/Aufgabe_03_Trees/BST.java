@@ -1,28 +1,55 @@
 package Aufgabe_03_Trees;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-
-/**
- * This file contains an implementation of a Binary Search Tree (BST) Any comparable data is allowed
- * within this tree (numbers, strings, comparable Objects, etc...). Supported operations include
- * adding, removing, height, and containment checks. Furthermore, multiple tree traversal Iterators
- * are provided including: 1) Preorder traversal 2) Inorder traversal 3) Postorder traversal 4)
- * Levelorder traversal
- *
- * @author William Fiset, william.alexandre.fiset@gmail.com
- */
+import java.util.Scanner;
 
 public class BST<T extends Comparable<T>> {
 
-    // Tracks the number of nodes in this BST
     int nodeCount = 0;
 
-    // This BST is a rooted tree so we maintain a handle on the root node
     Node root = null;
 
-    // Internal node containing node references
-    // and the actual node data
+    final static String OPTIONS = "ENTER: " +
+            "\n\t{ -successor -value } [PRINTS SUCCESSOR]" +
+            "\t{ -predecessor -value } [PRINTS PREDECESSOR]" +
+            "\t{ -add -value } [ADDS VALUE]" +
+            "\n\t{ -print } [PRINTS BINARY SEARCH TREE]" +
+            "\t\t{ -remove -value } [REMOVES VALUE]" +
+            "\t\t\t\t{ -update -old value -new value } [UPDATES VALUE] " +
+            "\n\t{ -inorder } [PRINTS IN ORDER TRAVERSAL]" +
+            "\t{ -preorder } [PRINTS PRE ORDER TRAVERSAL]" +
+            "\t\t{ -postorder } [PRINTS POST ORDER TRAVERSAL]" +
+            "\t{ -level } [PRINTS LEVEL ORDER TRAVERASAL]" +
+            "\n\t{ -exit } [SHUTS DOWN PROGRAM]"
+            ;
+
+    final static String WRONGINPUT = "Invalid input";
+    final static String ENTERTWONUMBERS = "Enter two numbers";
+    final static String REMOVESUCCESSFULL = "Remove successful";
+    final static String UPDATESUCCESSFULL = "Update successful";
+    final static String REMOVEFAILED = "Remove failed";
+    final static String UPDATEFAILED = "Update failed";
+    final static String NODENOTFOUND = "Node not found";
+    final static String SUCCESSOR = "The successor value of ";
+    final static String PREDECESSOR = "The predecessor value of ";
+    final static String IS = " is ";
+    final static String ADDSUCCESSFULL = "Added successful";
+    final static String ADDFAILED = "Add failed";
+    final static String PRINT = "print";
+    final static String REMOVE = "remove";
+    final static String UPDATE = "update";
+    final static String EXIT = "exit";
+    final static String LEVEL = "level";
+    final static String PREDECESSORS = "predecessor";
+    final static String SUCCESSORS = "successor";
+    final static String PREORDER = "preorder";
+    final static String POSTORDER = "postorder";
+    final static String INORDER = "inorder";
+    final static String ADD = "add";
+
+
     private class Node {
         T data;
         Node left, right;
@@ -34,62 +61,50 @@ public class BST<T extends Comparable<T>> {
         }
     }
 
-    // Check if this binary tree is empty
     boolean isEmpty() {
         return size() == 0;
     }
 
-    // Get the number of nodes in this binary tree
     int size() {
         return nodeCount;
     }
 
-    // Add an element to this binary tree. Returns true
-    // if we successfully perform an insertion
     boolean add(T elem) {
 
-        // Check if the value already exists in this
-        // binary tree, if it does ignore adding it
         if (contains(elem)) {
+            printAddFailed();
             return false;
-
-            // Otherwise add this element to the binary tree
         } else {
             root = add(root, elem);
             nodeCount++;
+            printAddSuccessfull();
             return true;
         }
     }
 
-    // Private method to recursively add a value in the binary tree
     Node add(Node node, T elem) {
 
-        // Base case: found a leaf node
         if (node == null) {
             node = new Node(null, null, elem);
 
         } else {
-            // Pick a subtree to insert element
             if (elem.compareTo(node.data) < 0) {
                 node.left = add(node.left, elem);
             } else {
                 node.right = add(node.right, elem);
             }
         }
-
         return node;
     }
 
-    // Remove a value from this binary tree if it exists, O(n)
     boolean remove(T elem) {
-
-        // Make sure the node we want to remove
-        // actually exists before we remove it
         if (contains(elem)) {
             root = remove(root, elem);
             nodeCount--;
+            printRemoveSuccessFull();
             return true;
         }
+        printRemoveFailed();
         return false;
     }
 
@@ -99,79 +114,36 @@ public class BST<T extends Comparable<T>> {
 
         int cmp = elem.compareTo(node.data);
 
-        // Dig into left subtree, the value we're looking
-        // for is smaller than the current value
         if (cmp < 0) {
             node.left = remove(node.left, elem);
-
-            // Dig into right subtree, the value we're looking
-            // for is greater than the current value
         } else if (cmp > 0) {
             node.right = remove(node.right, elem);
-
-            // Found the node we wish to remove
         } else {
-
-            // This is the case with only a right subtree or
-            // no subtree at all. In this situation just
-            // swap the node we wish to remove with its right child.
             if (node.left == null) {
                 return node.right;
-
-                // This is the case with only a left subtree or
-                // no subtree at all. In this situation just
-                // swap the node we wish to remove with its left child.
             } else if (node.right == null) {
-
                 return node.left;
-
-                // When removing a node from a binary tree with two links the
-                // successor of the node being removed can either be the largest
-                // value in the left subtree or the smallest value in the right
-                // subtree. In this implementation I have decided to find the
-                // smallest value in the right subtree which can be found by
-                // traversing as far left as possible in the right subtree.
             } else {
-
-                // Find the leftmost node in the right subtree
-//                Node tmp = findMax(node.left);
                 Node tmp = findMin(node.right);
 
-                // Swap the data
                 node.data = tmp.data;
 
-                // Go into the right subtree and remove the leftmost node we
-                // found and swapped data with. This prevents us from having
-                // two nodes in our tree with the same value.
                 node.right = remove(node.right, tmp.data);
-//                node.left = remove(node.left, tmp.data);
-
-                // If instead we wanted to find the largest node in the left
-                // subtree as opposed to smallest node in the right subtree
-                // here is what we would do:
-                // Node tmp = findMax(node.left);
-                // node.data = tmp.data;
-                // node.left = remove(node.left, tmp.data);
-
             }
         }
-
         return node;
     }
 
-    // Helper method to find the leftmost node (which has the smallest value)
     Node findMin(Node node) {
         while (node.left != null) node = node.left;
         return node;
     }
 
-    // Helper method to find the rightmost node (which has the largest value)
     Node findMax(Node node) {
         while (node.right != null) node = node.right;
         return node;
     }
 
-    // returns true is the element exists in the tree
     boolean contains(T elem) {
         return contains(root, elem);
     }
@@ -191,32 +163,21 @@ public class BST<T extends Comparable<T>> {
         return cmp < 0 ? searchRecursive(current.left, value) : searchRecursive(current.right, value);
     }
 
-    // private recursive method to find an element in the tree
     boolean contains(Node node, T elem) {
 
-        // Base case: reached bottom, value not found
         if (node == null) return false;
 
         int cmp = elem.compareTo(node.data);
 
-        // Dig into the left subtree because the value we're
-        // looking for is smaller than the current value
         if (cmp < 0) return contains(node.left, elem);
-
-            // Dig into the right subtree because the value we're
-            // looking for is greater than the current value
         else if (cmp > 0) return contains(node.right, elem);
-
-            // We found the value we were looking for
         else return true;
     }
 
-    // Computes the height of the tree, O(n)
     int height() {
         return height(root);
     }
 
-    // Recursive helper method to compute the height of the tree
     int height(Node node) {
         if (node == null) return 0;
         return Math.max(height(node.left), height(node.right)) + 1;
@@ -238,17 +199,14 @@ public class BST<T extends Comparable<T>> {
         return max.data;
     }
 
-    // Successor eines gegebenen Knotens
     T successor(T elem) {
         Node node = findNode(root, elem);
-        if (node == null) return null;  // Element nicht gefunden
+        if (node == null) return null;
 
-        // Wenn der Knoten einen rechten Unterbaum hat
         if (node.right != null) {
             return findMin(node.right).data;
         }
 
-        // Ansonsten gehe nach oben zum Vorfahren
         Node parent = findParent(root, node);
         while (parent != null && node == parent.right) {
             node = parent;
@@ -257,17 +215,14 @@ public class BST<T extends Comparable<T>> {
         return parent != null ? parent.data : null;
     }
 
-    // Predecessor eines gegebenen Knotens
     T predecessor(T elem) {
         Node node = findNode(root, elem);
-        if (node == null) return null;  // Element nicht gefunden
+        if (node == null) return null;
 
-        // Wenn der Knoten einen linken Unterbaum hat
         if (node.left != null) {
             return findMax(node.left).data;
         }
 
-        // Ansonsten gehe nach oben zum Vorfahren
         Node parent = findParent(root, node);
         while (parent != null && node == parent.left) {
             node = parent;
@@ -293,11 +248,9 @@ public class BST<T extends Comparable<T>> {
         if (node.right != null) {
             return findMin(node.right);
         }
-
         return null;
     }
 
-    // Hilfsmethode zum Finden des Knotens mit einem bestimmten Wert
     Node findNode(Node node, T elem) {
         while (node != null) {
             int cmp = elem.compareTo(node.data);
@@ -315,7 +268,7 @@ public class BST<T extends Comparable<T>> {
     void updateNode(T elem, T newValue) {
         Node node = findNode(root, elem);
         if (node == null) {
-            System.out.println("node not found");
+            printNodeNotFound();
             return;
         }
 
@@ -334,12 +287,11 @@ public class BST<T extends Comparable<T>> {
 
             smaller = newValue.compareTo(pre.data);
             greater = newValue.compareTo(suc.data);
-            System.out.println("smaller: " + smaller + " greater: " + greater);
             if(greater < 0 && smaller > 0) {
                 node.data = newValue;
-                System.out.println("smaller < 0 && greater > 0: node.data: " + node.data + ", pre.data: " + pre.data + ", suc.data: " + suc.data);
+                printUpdateSuccessFull();
             } else {
-                System.out.println("smaller < 0 && greater > 0: couldnt update value: elem: " + elem + ", newValue: " + newValue);
+                printUpdateFailed();
             }
         }
     }
@@ -392,10 +344,6 @@ public class BST<T extends Comparable<T>> {
         return null;
     }
 
-
-    // This method returns an iterator for a given TreeTraversalOrder.
-    // The ways in which you can traverse the tree are in four different ways:
-    // preorder, inorder, postorder and levelorder.
     java.util.Iterator<T> traverse(TreeTraversalOrder order) {
         switch (order) {
             case PRE_ORDER:
@@ -411,9 +359,6 @@ public class BST<T extends Comparable<T>> {
         }
     }
 
-
-
-    // Returns as iterator to traverse the tree in pre order
     java.util.Iterator<T> preOrderTraversal() {
 
         final int expectedNodeCount = nodeCount;
@@ -443,7 +388,6 @@ public class BST<T extends Comparable<T>> {
         };
     }
 
-    // Returns as iterator to traverse the tree in order
     java.util.Iterator<T> inOrderTraversal() {
 
         final int expectedNodeCount = nodeCount;
@@ -464,7 +408,6 @@ public class BST<T extends Comparable<T>> {
 
                 if (expectedNodeCount != nodeCount) throw new java.util.ConcurrentModificationException();
 
-                // Dig left
                 while (trav != null && trav.left != null) {
                     stack.push(trav.left);
                     trav = trav.left;
@@ -472,7 +415,6 @@ public class BST<T extends Comparable<T>> {
 
                 Node node = stack.pop();
 
-                // Try moving down right once
                 if (node.right != null) {
                     stack.push(node.right);
                     trav = node.right;
@@ -488,7 +430,6 @@ public class BST<T extends Comparable<T>> {
         };
     }
 
-    // Returns as iterator to traverse the tree in post order
     java.util.Iterator<T> postOrderTraversal() {
         final int expectedNodeCount = nodeCount;
         final java.util.Stack<Node> stack1 = new java.util.Stack<>();
@@ -522,7 +463,38 @@ public class BST<T extends Comparable<T>> {
         };
     }
 
-    // Returns as iterator to traverse the tree in level order
+    void printInOrderTraversal() {
+        Iterator iterator = traverse(TreeTraversalOrder.IN_ORDER);
+        while(iterator.hasNext()) {
+            System.out.print(iterator.next() + " ");
+        }
+        System.out.println();
+    }
+
+    void printPostOrderTraversal() {
+        Iterator iterator = traverse(TreeTraversalOrder.POST_ORDER);
+        while(iterator.hasNext()) {
+            System.out.print(iterator.next() + " ");
+        }
+        System.out.println();
+    }
+
+    void printPreOrderTraversal() {
+        Iterator iterator = traverse(TreeTraversalOrder.PRE_ORDER);
+        while(iterator.hasNext()) {
+            System.out.print(iterator.next() + " ");
+        }
+        System.out.println();
+    }
+
+    void printLevelTraverse() {
+        Iterator iterator = traverse(TreeTraversalOrder.LEVEL_ORDER);
+        while(iterator.hasNext()) {
+            System.out.print(iterator.next() + " ");
+        }
+        System.out.println();
+    }
+
     java.util.Iterator<T> levelOrderTraversal() {
 
         final int expectedNodeCount = nodeCount;
@@ -564,53 +536,124 @@ public class BST<T extends Comparable<T>> {
         }
     }
 
+    static void printOptions() {
+        System.out.println(OPTIONS);
+    }
+
+    static void printWrongInput() {
+        System.out.println(WRONGINPUT);
+    }
+
+    static void printUpdate() {
+        System.out.println(ENTERTWONUMBERS);
+    }
+
+    static boolean isNumeric(String str) {
+        if(str.matches("[0-9]{1,3}")) {
+            return true;
+        }
+        return false;
+    }
+
+    static boolean isNotNumeric(String str) {
+        return !isNumeric(str);
+    }
+
+    static void printRemoveSuccessFull() {
+        System.out.println(REMOVESUCCESSFULL);
+    }
+
+    static void printRemoveFailed() {
+        System.out.println(REMOVEFAILED);
+    }
+
+    static void printUpdateSuccessFull() {
+        System.out.println(UPDATESUCCESSFULL);
+    }
+
+    static void printUpdateFailed() {
+        System.out.println(UPDATEFAILED);
+    }
+
+    static void printNodeNotFound() {
+        System.out.println(NODENOTFOUND);
+    }
+
+    static void printSuccessor() {
+        System.out.print(SUCCESSOR);
+    }
+
+    static void printPredecessor() {
+        System.out.print(PREDECESSOR);
+    }
+
+    static void printIs() {
+        System.out.print(IS);
+    }
+
+    static void printValue(String text) {
+        System.out.print(text);
+    }
+
+    static void printAddFailed() {
+        System.out.println(ADDFAILED);
+    }
+
+    static void printAddSuccessfull() {
+        System.out.println(ADDSUCCESSFULL);
+    }
+
     public static void main(String[] args) {
         BST<Integer> bst = new BST<>();
-        //int[] values = {50, 30, 70, 20, 40, 60, 80, 30, 30, 20, 70};
         int[] values = { 55, 40, 28, 10, 30, 60, 95, 88, 68, 90, 63, 84, 99, 98 };
 
         for (int val : values) bst.add(val);
+        Scanner scanner = new Scanner(System.in);
+        String[] input = new String[3];
 
-        System.out.println("Baumstruktur:");
-        bst.printTree();
+        while(true) {
+            printOptions();
+            input = scanner.nextLine().split("\\s+");
 
-//        System.out.println("\nInorder Traversierung:");
-//        System.out.println(bst.inorder());
-//
-//        System.out.println("\nMinimum: " + bst.minimum());
-//        System.out.println("Maximum: " + bst.maximum());
-//
-//        System.out.println("\nPredecessor von 60: " + bst.predecessor(60));
-//        System.out.println("Successor von 60: " + bst.successor(60));
-
-//        System.out.println("\nUpdate 60 → 65:");
-//        if (bst.updateValue(60, 65)) System.out.println("Update erfolgreich.");
-//        else System.out.println("Update ungültig.");
-//        bst.printTree();
-
-//        System.out.println("\nEntferne 70:");
-//        bst.remove(50);
-//        bst.printTree();
-
-        System.out.println("Update Node");
-        bst.updateNode(95,97);
-        //System.out.println(bst.updateNode3(28, 11));
-        bst.printTree();
-
-        //System.out.println("Suche nach 20: ");
-        //System.out.println(bst.search(70));
-
-        System.out.println("bst.minimum(): " + bst.minimum());
-        System.out.println("bst.maximum(): " + bst.maximum());
-
-        System.out.println("bst.successor(): " + bst.successor(20));
-        System.out.println("bst.predecessor(): " + bst.predecessor(20));
-
-        bst.printInorder(bst.root);
-        bst.printTraversalList();
-
-
+            if (input[0].equalsIgnoreCase(EXIT)) {
+                break;
+            } else if (input[0].equalsIgnoreCase(LEVEL)) {
+                bst.printLevelTraverse();
+            } else if (input[0].equalsIgnoreCase(PRINT)) {
+                bst.printTree();
+            } else if (input[0].equalsIgnoreCase(INORDER)) {
+                bst.printInOrderTraversal();
+            } else if (input[0].equalsIgnoreCase(POSTORDER)) {
+                bst.printPostOrderTraversal();
+            } else if (input[0].equalsIgnoreCase(PREORDER)) {
+                bst.printPreOrderTraversal();
+            } else if(input.length == 2) {
+                if (input[0].equalsIgnoreCase(ADD) && !input[1].equals("") && isNumeric(input[1])) {
+                    bst.add(Integer.parseInt(input[1]));
+                } else if(input[0].equalsIgnoreCase(REMOVE) && !input[1].equals("") && isNumeric(input[1])) {
+                    bst.remove(Integer.parseInt(input[1]));
+                } else if (input[0].equalsIgnoreCase(SUCCESSORS) && !input[1].equals("") && isNumeric(input[1])) {
+                    printSuccessor();
+                    printValue(input[1]);
+                    printIs();
+                    System.out.println(bst.successor(Integer.parseInt(input[1])));
+                } else if (input[0].equalsIgnoreCase(PREDECESSORS) && !input[1].equals("") && isNumeric(input[1])) {
+                    printPredecessor();
+                    printValue(input[1]);
+                    printIs();
+                    System.out.println(bst.predecessor(Integer.parseInt(input[1])));
+                } else {
+                    printWrongInput();
+                }
+            } else if(input.length == 3) {
+                if(input[0].equalsIgnoreCase(UPDATE) && !input[1].equals("") && !input[2].equals("") && isNumeric(input[1]) && isNumeric(input[2])) {
+                    bst.updateNode(Integer.parseInt(input[1]), Integer.parseInt(input[2]));
+                } else {
+                    printWrongInput();
+                }
+            } else {
+                printWrongInput();
+            }
+        }
     }
-
-
 }
