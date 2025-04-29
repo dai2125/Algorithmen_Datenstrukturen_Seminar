@@ -1,4 +1,4 @@
-package Aufgabe_04.Trees_And_Heaps;
+package Aufgabe_04_Trees_And_Heaps;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
