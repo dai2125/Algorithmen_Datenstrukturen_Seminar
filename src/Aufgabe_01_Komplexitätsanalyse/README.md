@@ -1,8 +1,8 @@
 # Matrix Addition und Multiplikation
 ### Matrix.java, Panel
 #### Features
-..* BigInteger
-..* Double
+* BigInteger
+* Double
 ..* Integer
 ..* Float
 ..* Long
