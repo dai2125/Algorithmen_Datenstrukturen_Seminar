@@ -1,8 +1,7 @@
-package Aufgabe_03.PDF;
+package Aufgabe_03_Trees;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * This file contains an implementation of a Binary Search Tree (BST) Any comparable data is allowed

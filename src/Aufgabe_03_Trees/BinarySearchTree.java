@@ -1,9 +1,11 @@
-package Aufgabe_03.PDF;
+package Aufgabe_03_Trees;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BinarySearchTree<T extends Comparable<T>> {
+
+    // TODO GUI https://github.com/dostonhamrakulov/Binary-Tree-in-Java-with-GUI/blob/master/BinaryTree/src/com/iidoston/TheWindow.java
 
     private Node<T> root;
 

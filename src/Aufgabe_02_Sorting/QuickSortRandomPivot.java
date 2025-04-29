@@ -1,4 +1,4 @@
-package Seminar_02_Sorting;
+package Aufgabe_02_Sorting;
 
 import java.util.Random;
 

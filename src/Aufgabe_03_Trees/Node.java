@@ -1,4 +1,4 @@
-package Aufgabe_04.PDF;
+package Aufgabe_03_Trees;
 
 public class Node<T extends Comparable<T>> {
 

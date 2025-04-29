@@ -1,4 +1,4 @@
-package Aufgabe_03.PDF;
+package Aufgabe_03_Trees;
 
 public enum TreeTraversalOrder {
     PRE_ORDER,

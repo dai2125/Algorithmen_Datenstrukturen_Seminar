@@ -1,32 +1,27 @@
-package Seminar_01_Komplexitätsanalyse;
+package Aufgabe_01_Komplexitätsanalyse;
 
+import javax.swing.*;
+import java.awt.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.Random;
 
-/**
- * Matrx. This Matrix implementation is designed to be more efficient
- * in cache. A matrix is a rectangular array of numbers, symbols, or expressions.
- * <p>
- * @see <a href="https://en.wikipedia.org/wiki/Matrix_(mathematics)">Matrix (Wikipedia)</a>
- * <br>
- * @author Justin Wetherell <phishman3579@gmail.com>
- */
-@SuppressWarnings("unchecked")
-public class Matrix<T extends Number> {
+public class Matrix<T extends Number> extends JPanel {
 
     private int rows = 0;
     private int cols = 0;
     private T[] matrix = null;
+    long[][] addTimes;
+    long[][] mulTimes;
+    int minSize;
+    int[] sizes;
 
     private final Comparator<T> comparator = new Comparator<T>() {
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public int compare(T o1, T o2) {
-            /* TODO: What if Java adds new numeric type? */
             int result = 0;
             if (o1 instanceof BigDecimal || o2 instanceof BigDecimal) {
                 BigDecimal c1 = (BigDecimal)o1;
@@ -57,26 +52,12 @@ public class Matrix<T extends Number> {
         }
     };
 
-    /**
-     * Matrix with 'rows' number of rows and 'cols' number of columns.
-     *
-     * @param rows Number of rows in Matrix.
-     * @param cols Number of columns in Matrix.
-     */
     public Matrix(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
         this.matrix = (T[]) new Number[rows * cols];
     }
 
-    /**
-     * Matrix with 'rows' number of rows and 'cols' number of columns, populates
-     * the double index matrix.
-     *
-     * @param rows Number of rows in Matrix.
-     * @param cols Number of columns in Matrix.
-     * @param matrix 2D matrix used to populate Matrix.
-     */
     public Matrix(int rows, int cols, T[][] matrix) {
         this.rows = rows;
         this.cols = cols;
@@ -84,6 +65,14 @@ public class Matrix<T extends Number> {
         for (int r=0; r<rows; r++)
             for (int c=0; c<cols; c++)
                 this.matrix[getIndex(r,c)] = matrix[r][c];
+    }
+
+    public Matrix(int[] sizes, long[][] addTimes, long[][] mulTimes) {
+        this.sizes = sizes;
+        this.addTimes = addTimes;
+        this.mulTimes = mulTimes;
+        minSize = sizes[0];
+        this.matrix = (T[]) new Number[rows * cols];
     }
 
     private int getIndex(int row, int col) {
@@ -167,7 +156,6 @@ public class Matrix<T extends Number> {
                     T m1 = this.get(r, c);
                     T m2 = input.get(r, c);
                     T result;
-                    /* TODO: This is ugly and how to handle number overflow? */
                     if (m1 instanceof BigDecimal || m2 instanceof BigDecimal) {
                         BigDecimal result2 = ((BigDecimal)m1).add((BigDecimal)m2);
                         result = (T)result2;
@@ -183,10 +171,12 @@ public class Matrix<T extends Number> {
                     } else if (m1 instanceof Float || m2 instanceof Float) {
                         Float result2 = (m1.floatValue() + m2.floatValue());
                         result = (T)result2;
-                    } else {
-                        // Integer
+                    } else if (m1 instanceof Integer || m2 instanceof Integer) {
                         Integer result2 = (m1.intValue() + m2.intValue());
                         result = (T)result2;
+                    } else {
+                        Integer result2 = (int) (m1.intValue() + m2.intValue());
+                        result = (T) result2;
                     }
                     output.set(r, c, result);
                 }
@@ -206,7 +196,6 @@ public class Matrix<T extends Number> {
                     T m1 = this.get(r, c);
                     T m2 = input.get(r, c);
                     T result;
-                    /* TODO: This is ugly and how to handle number overflow? */
                     if (m1 instanceof BigDecimal || m2 instanceof BigDecimal) {
                         BigDecimal result2 = ((BigDecimal)m1).subtract((BigDecimal)m2);
                         result = (T)result2;
@@ -244,13 +233,11 @@ public class Matrix<T extends Number> {
                 T[] row = getRow(r);
                 T[] column = input.getColumn(c);
                 T test = row[0];
-                /* TODO: This is ugly and how to handle number overflow? */
                 if (test instanceof BigDecimal) {
                     BigDecimal result = BigDecimal.ZERO;
                     for (int i = 0; i < cols; i++) {
                         T m1 = row[i];
                         T m2 = column[i];
-
                         BigDecimal result2 = ((BigDecimal)m1).multiply(((BigDecimal)m2));
                         result = result.add(result2);
                     }
@@ -260,7 +247,6 @@ public class Matrix<T extends Number> {
                     for (int i = 0; i < cols; i++) {
                         T m1 = row[i];
                         T m2 = column[i];
-
                         BigInteger result2 = ((BigInteger)m1).multiply(((BigInteger)m2));
                         result = result.add(result2);
                     }
@@ -270,7 +256,6 @@ public class Matrix<T extends Number> {
                     for (int i = 0; i < cols; i++) {
                         T m1 = row[i];
                         T m2 = column[i];
-
                         Long result2 = m1.longValue() * m2.longValue();
                         result = result+result2;
                     }
@@ -280,7 +265,6 @@ public class Matrix<T extends Number> {
                     for (int i = 0; i < cols; i++) {
                         T m1 = row[i];
                         T m2 = column[i];
-
                         Double result2 = m1.doubleValue() * m2.doubleValue();
                         result = result+result2;
                     }
@@ -290,7 +274,6 @@ public class Matrix<T extends Number> {
                     for (int i = 0; i < cols; i++) {
                         T m1 = row[i];
                         T m2 = column[i];
-
                         Float result2 = m1.floatValue() * m2.floatValue();
                         result = result+result2;
                     }
@@ -301,7 +284,6 @@ public class Matrix<T extends Number> {
                     for (int i = 0; i < cols; i++) {
                         T m1 = row[i];
                         T m2 = column[i];
-
                         Integer result2 = m1.intValue() * m2.intValue();
                         result = result+result2;
                     }
@@ -320,9 +302,6 @@ public class Matrix<T extends Number> {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         int hash = this.rows + this.cols;
@@ -331,9 +310,6 @@ public class Matrix<T extends Number> {
         return 31 * hash;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null)
@@ -356,9 +332,6 @@ public class Matrix<T extends Number> {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -390,30 +363,154 @@ public class Matrix<T extends Number> {
         return matrix;
     }
 
-    public static void main(String[] args) {
-        int n = 5000;
-        Matrix matrix1 = new Matrix(n, n);
-        Matrix matrix2 = new Matrix(n, n);
-        Matrix result = new Matrix(n, n);
-        Random random = new Random();
-        long start = 0;
-        long end = 0;
-
-        for(int r=0; r<matrix1.rows; r++) {
-            for(int c=0; c<matrix1.cols; c++) {
-                matrix1.set(r, c, random.nextInt(1, 100));
-                matrix2.set(r, c, random.nextInt(1, 100));
-                //System.out.print(matrix1.get(r, c) + " ");
+    boolean containsNullValue() {
+        for(int i = 0; i < this.rows; i++) {
+            for(int j = 0; j < this.cols; j++) {
+                if(this.get(i, j) == null || this.get(i, j).intValue() == 0) {
+                    return true;
+                }
             }
-            //System.out.println();
+        }
+        return false;
+    }
+
+    static boolean compareMatrices(Matrix m1, Matrix m2) {
+        Random random = new Random();
+        int temp = (m1.rows + m1.cols) / 100;
+
+        for(int i = 0; i < temp; i++) {
+            int row = random.nextInt(0, m1.rows);
+            int col = random.nextInt(0, m1.cols);
+            if(!Objects.equals(m1.get(row, col), m2.get(row, col))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static void printMatrix(Matrix matrix) {
+        for (int r = 0; r < matrix.rows; r++) {
+            for (int c = 0; c < matrix.cols; c++) {
+                System.out.print(matrix.get(r, c) + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    static void printMatrix(Matrix matrix, int fromRow, int fromCol, int toRow, int toCol) {
+        if(fromRow > toRow || fromCol > toCol || fromRow < 0 || fromCol < 0 || toRow > matrix.rows || toCol > matrix.cols) {
+            return;
         }
 
-        start = System.currentTimeMillis();
+        for (; fromRow < toRow; fromRow++) {
+            for (; fromCol < toCol; fromCol++) {
+                System.out.print(matrix.get(fromRow, fromCol) + " ");
+            }
+            System.out.println();
+        }
+    }
 
-        result = matrix1.add(matrix2);
+    static void addRandomValues(Matrix matrix) {
+        Random random = new Random();
 
-        end = System.currentTimeMillis();
-        System.out.println("time: " + (end - start) + " ms");
+        for(int r = 0; r < matrix.rows; r++) {
+            for(int c = 0; c < matrix.cols; c++) {
+                matrix.set(r, c, random.nextInt(1, 100));
+            }
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+
+        int width = getWidth();
+        int height = getHeight();
+
+        int maxSize = sizes[sizes.length - 1];
+        int maxTime = (int) mulTimes[mulTimes.length - 1][mulTimes.length - 1];
+
+        g2.drawLine(50, height - 50, width - 50, height - 50);
+        g2.drawLine(50, height - 50, 50, 50);
+
+        for (int i = 0; i < sizes.length; i++) {
+            int x = 50 + (sizes[i] * (width - 100) / maxSize);
+            g2.drawLine(x, height - 50, x, height - 45);
+            g2.drawString(Integer.toString(sizes[i]), x - 10, height - 30);
+        }
+
+        for (int i = 0; i < addTimes.length; i++) {
+            int y = height - 50 - ((int) addTimes[i][i] * (height - 100) / maxTime);
+            g2.drawLine(45, y, 50, y);
+            g2.drawString("" + addTimes[i][i], 5, y + 5);
+        }
+
+        int startX = 50;
+        int startY = height - 50;
+
+        Color[] colors = {Color.GREEN, Color.BLUE, Color.MAGENTA, Color.RED, Color.YELLOW, Color.ORANGE};
+
+        int y = 50;
+        int a = 0;
+        int b = 3;
+        Label label;
+
+        for (int i = 0; i < sizes.length; i++) {
+            g2.setColor(colors[i]);
+            g2.drawLine(startX, startY, startX + sizes[i] * (width - 100) / maxSize, startY - (int) (addTimes[i][i] * (height - 100) / maxTime));
+            g2.drawLine(startX, startY, startX + sizes[i] * (width - 100) / maxSize, startY - (int) (mulTimes[i][i] * (height - 100) / maxTime));
+            y = y + 25;
+            label = new Label("Calculation Add: " + (i + 1) + ", n: " + sizes[i] + ", time: " + addTimes[i][i]);
+            g2.drawString(label.getText(), 75, y);
+
+            y = y + 25;
+            label = new Label("Calculation Mul: " + (i + 1) + ", n: " + sizes[i] + ", time: " + mulTimes[i][i]);
+            g2.drawString(label.getText(), 75, y);
+        }
+    }
+
+    public static void main(String[] args) {
+
+        int[] sizes = {500, 1000, 1200};
+        long[][] addTimes = new long[sizes.length][sizes.length];
+        long[][] mulTimes = new long[sizes.length][sizes.length];
+
+        for (int i = 0; i < sizes.length; i++) {
+
+            Matrix matrix1 = new Matrix(sizes[i], sizes[i]);
+            Matrix matrix2 = new Matrix(sizes[i], sizes[i]);
+            Matrix result1 = new Matrix(sizes[i], sizes[i]);
+
+            addRandomValues(matrix1);
+            System.out.println("matrix1 containsNullValue(): " + matrix1.containsNullValue());
+
+            addRandomValues(matrix2);
+            System.out.println("matrix2 containsNullValue(): " + matrix2.containsNullValue());
+
+            long start = System.currentTimeMillis();
+            result1 = matrix1.add(matrix2);
+            long end = System.currentTimeMillis();
+            addTimes[i][i] = end - start;
+
+            System.out.println("addTimes[i]: " + Arrays.toString(addTimes[i]));
+            System.out.println("Result1 containsNullValue(): " + result1.containsNullValue());
+
+            start = System.currentTimeMillis();
+            result1 = matrix1.multiply(matrix2);
+            end = System.currentTimeMillis();
+            mulTimes[i][i] = end - start;
+
+            System.out.println("mulTimes[i]: " + Arrays.toString(mulTimes[i]));
+            System.out.println("Result1 containsNullValue(): " + result1.containsNullValue());
+        }
+
+        JFrame frame = new JFrame("n3 Diagram");
+        Matrix chart = new Matrix(sizes, addTimes, mulTimes);
+        frame.add(chart);
+        frame.setSize(1850, 1100);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
 
     }
 }

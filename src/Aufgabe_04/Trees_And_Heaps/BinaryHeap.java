@@ -1,4 +1,4 @@
-package Aufgabe_04.PDF;
+package Aufgabe_04.Trees_And_Heaps;
 
 import java.util.ArrayList;
 import java.util.List;

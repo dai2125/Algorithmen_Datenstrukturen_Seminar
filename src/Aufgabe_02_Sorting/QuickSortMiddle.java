@@ -1,4 +1,4 @@
-package Seminar_02_Sorting;
+package Aufgabe_02_Sorting;
 
 public class QuickSortMiddle {
     int counter = 0;
