@@ -301,22 +301,6 @@ public class BinaryHeap<T extends Comparable<T>> {
         }
     }
 
-//    boolean updateValue(T oldValue, T newValue) {
-//        Node<T> node = search(oldValue);
-//        if(node == null) {
-//            return false;
-//        }
-//
-//        T pred = predecessor(oldValue);
-//        T succ = successor(oldValue);
-//
-//        if((pred == null || newValue.compareTo(pred) > 0) && (succ == null || newValue.compareTo(succ) < 0)) {
-//            remove(oldValue);
-//            return insert(newValue);
-//        }
-//        return false;
-//    }
-
     enum Type {
         MIN,
         MAX
