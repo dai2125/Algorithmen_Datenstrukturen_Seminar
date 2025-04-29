@@ -3,16 +3,17 @@
 #### Features
 * BigInteger
 * Double
-..* Integer
-..* Float
-..* Long
-..* Matrix Multiplikation
-..* Matrix Addition
+* Integer
+* Float
+* Long
+* Matrix Addition
+* Matrix Multiplikation
 
 ### MatrixStrassenOptimized
-..* Integer
-..* Matrix Multiplikation
-..* Matrix Addition
+* Integer
+* Matrix Addition
+* Matrix Multiplikation
+* Matrix Strassen Multiplikation optimiert
 
 ### VisualizingData
-..* Linien Diagramm von den gemossenen Werten
+* Linien Diagramm von den gemossenen Werten
