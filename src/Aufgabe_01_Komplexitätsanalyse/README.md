@@ -6,8 +6,8 @@ Generiert standardmäßig random __int[][] Matrizen__. __Addiert__, __standard m
 #### Features
 * Integer
 * addMatricesThreadSupported()
-* standardMultiply() O(n^3)
-* strassenMultiply() O(n log2^7)
+* standardMultiply() __O(n^3)__
+* strassenMultiply() __O(n log2^7)__
 * generateRandomMatrix()
 * searchMatrix()
 * compareMatrices()
