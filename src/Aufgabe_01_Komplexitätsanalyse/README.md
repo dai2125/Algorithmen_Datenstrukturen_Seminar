@@ -2,12 +2,12 @@
 ****
 ### MatrixStrassenOptimized.java
 
-Generiert standardmäßig random __int[][] Matrizen__. __Addiert__, __standard multiplikation__ und __Strassen multipliziert__ __(n x n) Matrizen__ und __misst__ den __Zeitaufwand__.
+Generiert standardmäßig random __int[][] Matrizen__. __Addiert__, __standard multipliziert__ und __Strassen multipliziert__ __(n x n) Matrizen__ und __misst__ den __Zeitaufwand__.
 #### Features
 * Integer
 * addMatricesThreadSupported()
-* standardMultiply()
-* strassenMultiply()
+* standardMultiply() O(n^3)
+* strassenMultiply() O(n log2^7)
 * generateRandomMatrix()
 * searchMatrix()
 * compareMatrices()
